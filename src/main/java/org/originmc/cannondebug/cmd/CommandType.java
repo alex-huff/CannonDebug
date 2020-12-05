@@ -46,7 +46,9 @@ public enum CommandType {
 
     REGION(CmdRegion.class, new String[]{"region", "r"}),
 
-    SELECT(CmdSelect.class, new String[]{"select", "s"});
+    SELECT(CmdSelect.class, new String[]{"select", "s"}),
+
+    TP(CmdTp.class, new String[]{"tp"});
 
     private static final Map<String, CommandType> BY_ALIAS = new HashMap<>();
 

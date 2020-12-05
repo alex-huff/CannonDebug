@@ -46,6 +46,21 @@ public final class NumberUtils {
     }
 
     /**
+     * Attempts to find a double from a string. Failing that, it will return
+     * zero.
+     *
+     * @param str string to parse for a double.
+     * @return a valid double. Default as zero if parsing fails.
+     */
+    public static double parseDouble(String str) {
+        try {
+            return Double.parseDouble(str);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    /**
      * Attempts to find the highest integer based off the effective permissions
      * of a permissible.
      *
@@ -81,6 +96,11 @@ public final class NumberUtils {
             }
         }
         return value;
+    }
+
+    public static boolean isInsideCube(double coord) {
+        double x = Math.abs(coord) % 1;
+        return x >= 0.49000000953674316 && x <= 0.5099999904632568D;
     }
 
 }

@@ -97,7 +97,26 @@ public final class CmdHistoryAll extends CommandExecutor {
                             .color(WHITE)
 
                             .then(latest.getBlockX() + " " + latest.getBlockY() + " " + latest.getBlockZ())
+                            .formattedTooltip(new FancyMessage("Click here to teleport to location").color(DARK_AQUA).style(BOLD))
                             .color(RED)
+                            .command("/c tp " + latest.getX() + " " + latest.getY() + " " + latest.getZ())
+
+                            .then(" | [")
+                            .color(DARK_GRAY)
+
+                            .then("Position")
+                            .formattedTooltip(
+                                    new FancyMessage("Clicking this will allow you to copy the location."),
+                                    new FancyMessage("It will suggest a command from there you can copy it with ")
+                                    .color(WHITE)
+                                    .then("CTRL + C")
+                                    .color(LIGHT_PURPLE)
+                            )
+                            .color(AQUA)
+                            .suggest(latest.getX() + " " + latest.getY() + " " + latest.getZ())
+
+                            .then("]")
+                            .color(DARK_GRAY)
             );
         }
 

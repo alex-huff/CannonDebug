@@ -69,7 +69,7 @@ public final class CmdHistoryID extends CommandExecutor {
         for (int i = 0; i < lifespan; i++) {
             Location location = tracker.getLocationHistory().get(i);
             Vector velocity = tracker.getVelocityHistory().get(i);
-            lines.add(new FancyMessage("Tick: " + i + " ")
+            FancyMessage message = new FancyMessage("Tick: " + i + " ")
                             .color(GRAY)
                             .formattedTooltip(
                                     new FancyMessage("Click for all history on this tick.")
@@ -113,6 +113,7 @@ public final class CmdHistoryID extends CommandExecutor {
                             .then("Hover for location and velocity")
                             .color(WHITE)
                             .formattedTooltip(
+                                    new FancyMessage("Click here to teleport to location").color(DARK_AQUA).style(BOLD),
                                     new FancyMessage("LOCATION").color(YELLOW).style(BOLD),
                                     new FancyMessage("X: ").color(WHITE).then("" + location.getX()).color(RED),
                                     new FancyMessage("Y: ").color(WHITE).then("" + location.getY()).color(RED),
@@ -123,7 +124,57 @@ public final class CmdHistoryID extends CommandExecutor {
                                     new FancyMessage("Y: ").color(WHITE).then("" + velocity.getY()).color(RED),
                                     new FancyMessage("Z: ").color(WHITE).then("" + velocity.getZ()).color(RED)
                             )
-            );
+                            .command("/c tp " + location.getX() + " " + location.getY() + " " + location.getZ())
+
+                            .then(" | [")
+                            .color(DARK_GRAY)
+
+                            .then("P")
+                            .formattedTooltip(
+                                    new FancyMessage("Clicking this will allow you to copy the location."),
+                                    new FancyMessage("It will suggest a command from there you can copy it with ")
+                                    .color(WHITE)
+                                    .then("CTRL + C")
+                                    .color(LIGHT_PURPLE)
+                            )
+                            .color(AQUA)
+                            .suggest(location.getX() + " " + location.getY() + " " + location.getZ())
+
+                            .then("M")
+                            .formattedTooltip(
+                                    new FancyMessage("Clicking this will allow you to copy the velocity."),
+                                    new FancyMessage("It will suggest a command from there you can copy it with ")
+                                    .color(WHITE)
+                                    .then("CTRL + C")
+                                    .color(AQUA)
+                            )
+                            .color(LIGHT_PURPLE)
+                            .suggest(velocity.getX() + " " + velocity.getY() + " " + velocity.getZ());
+
+            if (NumberUtils.isInsideCube(location.getX()) && NumberUtils.isInsideCube(location.getZ()) ||
+                Math.abs(velocity.getX()) != 0.0 && NumberUtils.isInsideCube(location.getX()) ||
+                Math.abs(velocity.getZ()) != 0.0 && NumberUtils.isInsideCube(location.getZ())) {
+                message.then("X")
+                       .color(GREEN)
+                       .formattedTooltip(new FancyMessage("This location is within a block on the x or z axis"));
+            }
+
+            if (NumberUtils.isInsideCube(location.getY() + (double) 0.49F)) {
+                message.then("Y")
+                       .color(RED)
+                       .formattedTooltip(new FancyMessage("This location is within a block on y axis"));
+            }
+
+            if (Math.sqrt(velocity.getX() * velocity.getX() + velocity.getY() * velocity.getY() + velocity.getZ() * velocity.getZ()) >= 8.0D) {
+                message.then("M")
+                       .color(YELLOW)
+                       .formattedTooltip(new FancyMessage("This entity is moving fast [>= 8.0, cannot swing]"));
+            }
+
+            message.then("]")
+                   .color(DARK_GRAY);
+
+            lines.add(message);
         }
 
         // Send user the pager messages.
