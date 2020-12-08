@@ -1,5 +1,6 @@
 package org.originmc.cannondebug.cmd;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -7,6 +8,7 @@ import org.originmc.cannondebug.BlockSelection;
 import org.originmc.cannondebug.CannonDebugPlugin;
 import org.originmc.cannondebug.EntityTracker;
 import org.originmc.cannondebug.utils.NumberUtils;
+import org.originmc.cannondebug.utils.PlotSquared;
 
 public class CmdTp extends CommandExecutor {
 
@@ -39,10 +41,16 @@ public class CmdTp extends CommandExecutor {
         // If we found it in the history teleport there
         if (found) {
             Player player = user.getBase();
-            Location current = player.getLocation();
-            location.setPitch(current.getPitch());
-            location.setYaw(current.getYaw());
-            user.getBase().teleport(location);
+
+            if ((!PlotSquared.isEnabled() || PlotSquared.isPlotTrusted(user.getBase(), location))) {
+                Location current = player.getLocation();
+                location.setPitch(current.getPitch());
+                location.setYaw(current.getYaw());
+                user.getBase().teleport(location);
+            } else {
+                player.sendMessage(ChatColor.RED + "You cannot teleport here.");
+            }
+
             return true;
         }
 
