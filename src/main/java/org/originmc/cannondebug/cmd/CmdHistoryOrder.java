@@ -115,7 +115,7 @@ public final class CmdHistoryOrder extends CommandExecutor {
                             .then(" | [")
                             .color(DARK_GRAY)
 
-                            .then("Position")
+                            .then("Pos")
                             .formattedTooltip(
                                     new FancyMessage("Clicking this will allow you to copy the location."),
                                     new FancyMessage("It will suggest a command from there you can copy it with ")
