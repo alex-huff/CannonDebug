@@ -1,8 +1,11 @@
 package org.originmc.cannondebug.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -11,10 +14,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.material.Dispenser;
+import org.bukkit.util.Vector;
 import org.originmc.cannondebug.BlockSelection;
 import org.originmc.cannondebug.CannonDebugPlugin;
 import org.originmc.cannondebug.EntityTracker;
 import org.originmc.cannondebug.User;
+import org.originmc.cannondebug.utils.Configuration;
+
+import java.util.List;
 
 import static org.originmc.cannondebug.utils.MaterialUtils.isDispenser;
 import static org.originmc.cannondebug.utils.MaterialUtils.isExplosives;
@@ -28,8 +35,68 @@ public class WorldListener implements Listener {
         this.plugin = plugin;
     }
 
+    public void tick() {
+        if (!plugin.getConfiguration().alternativeTracking) {
+            return;
+        }
+
+        // Track recently spawned
+        for (World world : Bukkit.getWorlds()) {
+            List<Entity> entities = world.getEntities();
+
+            for (int i = 0, entitiesSize = entities.size(); i < entitiesSize; i++) {
+                Entity entity = entities.get(i);
+
+                if (entity.getTicksLived() != 1) {
+                    continue;
+                }
+
+                track(entity);
+            }
+        }
+    }
+
+    private void track(Entity entity) {
+        Location sourceLocation;
+        if (entity instanceof TNTPrimed) {
+            sourceLocation = ((TNTPrimed) entity).getSourceLoc();
+        } else if (entity instanceof FallingBlock) {
+            sourceLocation = ((FallingBlock) entity).getSourceLoc();
+        } else {
+            return;
+        }
+
+        if (sourceLocation.getX() % 1 != 0 || sourceLocation.getZ() % 1 != 0) {
+            sourceLocation = sourceLocation.clone();
+            sourceLocation.subtract(0.5, 0.0, 0.5);
+        }
+
+        if (plugin.getSelections().containsKey(sourceLocation)) {
+            List<BlockSelection> blockSelections = plugin.getSelections().get(sourceLocation);
+
+            EntityTracker tracker = null;
+            for (BlockSelection selection : blockSelections) {
+                // Build a new tracker due to it being used.
+                if (tracker == null) {
+                    tracker = new EntityTracker(entity.getType(), plugin.getCurrentTick());
+                    tracker.setEntity(entity);
+                    plugin.getActiveTrackers().add(tracker);
+                }
+
+                // Update order
+                selection.setOrder(selection.getUser().getAndIncOrder());
+
+                // Add entity tracker to user selection
+                selection.setTracker(tracker);
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void startProfiling(BlockDispenseEvent event) {
+        if (plugin.getConfiguration().alternativeTracking) {
+            return;
+        }
         // Do nothing if block is not a dispenser.
         Block block = event.getBlock();
         if (!isDispenser(block.getType())) return;
@@ -62,6 +129,9 @@ public class WorldListener implements Listener {
                 plugin.getActiveTrackers().add(tracker);
             }
 
+            // Update order
+            selection.setOrder(user.getAndIncOrder());
+
             // Add block tracker to user.
             selection.setTracker(tracker);
         }
@@ -69,6 +139,9 @@ public class WorldListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void startProfiling(EntityChangeBlockEvent event) {
+        if (plugin.getConfiguration().alternativeTracking) {
+            return;
+        }
         // Do nothing if the material is not used for stacking in cannons.
         Block block = event.getBlock();
         if (!isStacker(block.getType())) return;
@@ -92,6 +165,9 @@ public class WorldListener implements Listener {
                 tracker.setEntity(event.getEntity());
                 plugin.getActiveTrackers().add(tracker);
             }
+
+            // Update order
+            selection.setOrder(user.getAndIncOrder());
 
             // Add block tracker to user.
             selection.setTracker(tracker);

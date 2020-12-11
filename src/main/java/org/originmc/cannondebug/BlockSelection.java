@@ -35,6 +35,10 @@ public final class BlockSelection {
 
     private final Location location;
 
+    private final User user;
+
+    private int order = 0;
+
     private EntityTracker tracker = null;
 
 }

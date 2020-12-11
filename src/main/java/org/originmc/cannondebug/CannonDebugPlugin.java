@@ -25,15 +25,24 @@
 
 package org.originmc.cannondebug;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.originmc.cannondebug.cmd.CommandType;
 import org.originmc.cannondebug.listener.PlayerListener;
 import org.originmc.cannondebug.listener.WorldListener;
+import org.originmc.cannondebug.utils.Configuration;
 import org.originmc.cannondebug.utils.EnumUtils;
 import org.originmc.cannondebug.utils.MaterialUtils;
 import org.originmc.cannondebug.utils.NumberUtils;
@@ -53,15 +62,23 @@ import static org.bukkit.ChatColor.WHITE;
 
 public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
 
+    @Getter
     private final Map<UUID, User> users = new HashMap<>();
 
+    @Getter
+    private final Map<Location, List<BlockSelection>> selections = new HashMap<>();
+
+    @Getter
     private final List<EntityTracker> activeTrackers = new ArrayList<>();
 
+    @Getter
+    @Setter
     private long currentTick = 0;
 
-    public Map<UUID, User> getUsers() {
-        return users;
-    }
+    private WorldListener worldListener;
+
+    @Getter
+    private Configuration configuration;
 
     public User getUser(UUID playerId) {
         // Return null if the player id has no user profile attached.
@@ -71,22 +88,12 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
         return users.get(playerId);
     }
 
-    public List<EntityTracker> getActiveTrackers() {
-        return activeTrackers;
-    }
-
-    public long getCurrentTick() {
-        return currentTick;
-    }
-
-    public void setCurrentTick(long currentTick) {
-        this.currentTick = currentTick;
-    }
-
     @Override
     public void onEnable() {
+        configuration = new Configuration(this);
+        configuration.loadConfiguration();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getServer().getPluginManager().registerEvents(new WorldListener(this), this);
+        getServer().getPluginManager().registerEvents(worldListener = new WorldListener(this), this);
         getServer().getScheduler().runTaskTimer(this, this, 1, 1);
 
         // Load user profiles.
@@ -97,6 +104,8 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void run() {
+        worldListener.tick();
+
         // Loop through every active tracker.
         Iterator<EntityTracker> iterator = activeTrackers.iterator();
         while (iterator.hasNext()) {
@@ -111,6 +120,11 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
                 tracker.setEntity(null);
                 iterator.remove();
             }
+        }
+
+        // Reset order
+        for (User user : users.values()) {
+            user.setOrder(-1);
         }
 
         // Increment the tick counter.
@@ -131,18 +145,28 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
      */
     public void handleSelection(User user, Block block) {
         // Do nothing if not a selectable block.
-        if (!MaterialUtils.isSelectable(block.getType())) return;
+        if (!MaterialUtils.isSelectable(block.getType(), configuration.alternativeTracking)) return;
 
         // Attempt to deselect block if it is already selected.
         BlockSelection selection = user.getSelection(block.getLocation());
         Player player = user.getBase();
         if (selection != null) {
             // Inform the player.
-            player.sendMessage(String.format(RED + "" + BOLD + "REM " + WHITE + "%m @ %x %y %z " + GRAY + "ID: %i",
+            player.sendMessage(String.format(RED + "" + BOLD + "REM " + WHITE + "%s @ %s %s %s " + GRAY + "ID: %s",
                     EnumUtils.getFriendlyName(block.getType()), block.getX(), block.getY(), block.getZ(), selection.getId()));
 
             // Remove the clicked location.
             user.getSelections().remove(selection);
+
+            List<BlockSelection> list = selections.get(selection.getLocation());
+
+            if (list != null) {
+                if (list.size() == 1) {
+                    selections.remove(selection.getLocation());
+                } else {
+                    list.remove(selection);
+                }
+            }
 
             // Update users preview.
             if (user.isPreviewing()) {
@@ -167,6 +191,10 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
 
         // Add the selected location.
         selection = user.addSelection(block.getLocation());
+
+        Location spawnLocation = selection.getLocation();
+        List<BlockSelection> list = selections.computeIfAbsent(spawnLocation, k -> new ArrayList<>());
+        list.add(selection);
 
         // Inform the player.
         player.sendMessage(String.format(GREEN + "" + BOLD + "ADD " + WHITE + "%s @ %s %s %s " + GRAY + "ID: %s",

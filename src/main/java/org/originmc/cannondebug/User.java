@@ -27,6 +27,10 @@ package org.originmc.cannondebug;
 
 import lombok.Data;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -41,11 +45,17 @@ public final class User {
 
     private int id = 1;
 
+    private int order = -1;
+
     private boolean selecting;
 
     private boolean previewing;
 
     private FancyPager pager = FancyPager.DEFAULT;
+
+    public int getAndIncOrder() {
+        return ++order;
+    }
 
     public BlockSelection getSelection(int id) {
         for (BlockSelection selection : selections) {
@@ -71,7 +81,7 @@ public final class User {
         if (selection != null) return selection;
 
         // Add selection.
-        selection = new BlockSelection(id++, location);
+        selection = new BlockSelection(id++, location, this);
         selections.add(selection);
         return selection;
     }

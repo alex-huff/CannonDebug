@@ -21,6 +21,7 @@ permissions:
   cannondebug.history.help: {default: false}
   cannondebug.history.id: {default: false}
   cannondebug.history.tick: {default: false}
+  cannondebug.history.order: {default: false}
   cannondebug.maxarea.unlimited: {default: false}
   cannondebug.maxselections.unlimited: {default: false}
   cannondebug.page: {default: false}
@@ -28,6 +29,7 @@ permissions:
   cannondebug.region: {default: false}
   cannondebug.select: {default: false}
   cannondebug.tp: {default: false}
+  cannondebug.tracking: {default: false}
 
   cannondebug.history.*:
     default: false
@@ -37,6 +39,7 @@ permissions:
       cannondebug.history.help: true
       cannondebug.history.id: true
       cannondebug.history.tick: true
+      cannondebug.history.order: true
 
   cannondebug.user:
     default: true
@@ -58,6 +61,7 @@ permissions:
       cannondebug.maxarea.unlimited: true
       cannondebug.maxselections.unlimited: true
       cannondebug.user: true
+      cannondebug.tracking: true
 
   cannondebug.*:
     default: false

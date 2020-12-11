@@ -40,6 +40,7 @@ public final class CmdHistoryHelp extends CommandExecutor {
             new FancyMessage("/c h a,all ").color(AQUA).then("Prints all up to date profiling history.").color(YELLOW),
             new FancyMessage("/c h ?,help ").color(AQUA).then("Displays this plugins' history help page.").color(YELLOW),
             new FancyMessage("/c h i,id ").color(AQUA).then("[id] ").color(DARK_AQUA).then("View all history for an entity id.").color(YELLOW),
+            new FancyMessage("/c h o,order ").color(AQUA).then("[order] ").color(DARK_AQUA).then("View all history by entity order.").color(YELLOW),
             new FancyMessage("/c h t,tick ").color(AQUA).then("[tick] ").color(DARK_AQUA).then("View all history in a server tick.").color(YELLOW)
     });
 

@@ -86,6 +86,11 @@ public final class CmdHistoryID extends CommandExecutor {
                                             .then("" + tracker.getSpawnTick())
                                             .color(AQUA),
 
+                                    new FancyMessage("Order: ")
+                                            .color(YELLOW)
+                                            .then("" + selection.getOrder())
+                                            .color(LIGHT_PURPLE),
+
                                     new FancyMessage("Death tick: ")
                                             .color(YELLOW)
                                             .then((tracker.getDeathTick() == -1 ? "Still alive" : "" + tracker.getDeathTick()))

@@ -40,7 +40,9 @@ public enum HistoryCommandType {
 
     ID(CmdHistoryID.class, new String[]{"id", "i"}),
 
-    TICK(CmdHistoryTick.class, new String[]{"tick", "t"});
+    TICK(CmdHistoryTick.class, new String[]{"tick", "t"}),
+
+    ORDER(CmdHistoryOrder.class, new String[]{"order", "o"});
 
     private static final Map<String, HistoryCommandType> BY_ALIAS = new HashMap<>();
 

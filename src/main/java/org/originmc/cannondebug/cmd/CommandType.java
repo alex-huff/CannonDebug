@@ -48,7 +48,9 @@ public enum CommandType {
 
     SELECT(CmdSelect.class, new String[]{"select", "s"}),
 
-    TP(CmdTp.class, new String[]{"tp"});
+    TP(CmdTp.class, new String[]{"tp"}),
+
+    TRACKING(CmdTracking.class, new String[] {"tracking"});
 
     private static final Map<String, CommandType> BY_ALIAS = new HashMap<>();
 

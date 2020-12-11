@@ -32,6 +32,9 @@ import org.bukkit.entity.Player;
 import org.originmc.cannondebug.BlockSelection;
 import org.originmc.cannondebug.CannonDebugPlugin;
 
+import java.util.Iterator;
+import java.util.List;
+
 public final class CmdClear extends CommandExecutor {
 
     public CmdClear(CannonDebugPlugin plugin, CommandSender sender, String[] args, String permission) {
@@ -66,6 +69,18 @@ public final class CmdClear extends CommandExecutor {
             }
 
             // Delete users selections.
+            for (BlockSelection blockSelection : user.getSelections()) {
+                for (Iterator<List<BlockSelection>> iterator = plugin.getSelections().values().iterator(); iterator.hasNext(); ) {
+                    List<BlockSelection> list = iterator.next();
+                    list.remove(blockSelection);
+
+                    // If it was the last element remove it
+                    if (list.size() == 0) {
+                        iterator.remove();
+                    }
+                }
+            }
+
             user.getSelections().clear();
 
             // Send confirmation message.

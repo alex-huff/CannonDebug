@@ -35,21 +35,27 @@ import org.originmc.cannondebug.FancyPager;
 import org.originmc.cannondebug.utils.EnumUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.bukkit.ChatColor.*;
 
-public final class CmdHistoryAll extends CommandExecutor {
+public final class CmdHistoryOrder extends CommandExecutor {
 
-    public CmdHistoryAll(CannonDebugPlugin plugin, CommandSender sender, String[] args, String permission) {
+    public CmdHistoryOrder(CannonDebugPlugin plugin, CommandSender sender, String[] args, String permission) {
         super(plugin, sender, args, permission);
     }
 
+    // TODO: Make it sort by order
+
     @Override
     public boolean perform() {
+        List<BlockSelection> blockSelections = new ArrayList<>(user.getSelections());
+        blockSelections.sort(Comparator.comparingInt(BlockSelection::getOrder));
+
         // Generate fancy message lines for all new message data.
         List<FancyMessage> lines = new ArrayList<>();
-        for (BlockSelection selection : user.getSelections()) {
+        for (BlockSelection selection : blockSelections) {
             // Do nothing if tracker has not been spawned for this selection yet.
             EntityTracker tracker = selection.getTracker();
             if (tracker == null) continue;
@@ -57,7 +63,7 @@ public final class CmdHistoryAll extends CommandExecutor {
             // Generate a new fancy message line to add to the pager.
             Location initial = tracker.getLocationHistory().get(0);
             Location latest = tracker.getLocationHistory().get(tracker.getLocationHistory().size() - 1);
-            lines.add(new FancyMessage("ID: " + selection.getId() + " ")
+            lines.add(new FancyMessage("OOE: " + selection.getOrder() + " ")
                             .color(GRAY)
                             .formattedTooltip(
                                     new FancyMessage("Click for all history on this ID.")
@@ -69,9 +75,9 @@ public final class CmdHistoryAll extends CommandExecutor {
                                             .then("" + tracker.getSpawnTick())
                                             .color(AQUA),
 
-                                    new FancyMessage("Order: ")
+                                    new FancyMessage("ID: ")
                                             .color(YELLOW)
-                                            .then("" + selection.getOrder())
+                                            .then("" + selection.getId())
                                             .color(LIGHT_PURPLE),
 
                                     new FancyMessage("Death tick: ")
