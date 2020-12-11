@@ -46,12 +46,10 @@ public final class CmdHistoryOrder extends CommandExecutor {
         super(plugin, sender, args, permission);
     }
 
-    // TODO: Make it sort by order
-
     @Override
     public boolean perform() {
         List<BlockSelection> blockSelections = new ArrayList<>(user.getSelections());
-        blockSelections.sort(Comparator.comparingInt(BlockSelection::getOrder));
+        blockSelections.sort(Comparator.comparingLong((BlockSelection o) -> o.getTracker().getSpawnTick()).thenComparingInt(BlockSelection::getOrder));
 
         // Generate fancy message lines for all new message data.
         List<FancyMessage> lines = new ArrayList<>();
