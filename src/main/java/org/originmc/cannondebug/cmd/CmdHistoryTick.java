@@ -116,7 +116,7 @@ public final class CmdHistoryTick extends CommandExecutor {
                             .then("Hover for location and velocity")
                             .color(WHITE)
                             .formattedTooltip(
-                                    new FancyMessage("Click here to teleport to location").color(DARK_AQUA).style(BOLD),
+                                    new FancyMessage("Click here to teleport to this location").color(DARK_AQUA).style(BOLD),
                                     new FancyMessage("LOCATION").color(YELLOW).style(BOLD),
                                     new FancyMessage("X: ").color(WHITE).then("" + location.getX()).color(RED),
                                     new FancyMessage("Y: ").color(WHITE).then("" + location.getY()).color(RED),

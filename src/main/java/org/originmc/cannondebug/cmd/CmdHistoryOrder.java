@@ -106,7 +106,7 @@ public final class CmdHistoryOrder extends CommandExecutor {
                             .color(WHITE)
 
                             .then(latest.getBlockX() + " " + latest.getBlockY() + " " + latest.getBlockZ())
-                            .formattedTooltip(new FancyMessage("Click here to teleport to location").color(DARK_AQUA).style(BOLD))
+                            .formattedTooltip(new FancyMessage("Click here to teleport to this location").color(DARK_AQUA).style(BOLD))
                             .color(RED)
                             .command("/c tp " + latest.getX() + " " + latest.getY() + " " + latest.getZ())
 
