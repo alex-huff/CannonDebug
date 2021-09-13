@@ -60,7 +60,7 @@ import static org.bukkit.ChatColor.WHITE;
 public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
 
     public static CannonDebugPlugin instance;
-    public static final String cdChannel = "cannondebugextra:main";
+    public static final String cdChannel = "cannondebug:main";
 
     @Getter
     private final Map<UUID, User> users = new HashMap<>();

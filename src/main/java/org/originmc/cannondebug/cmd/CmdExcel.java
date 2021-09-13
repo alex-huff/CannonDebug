@@ -22,6 +22,10 @@ public class CmdExcel extends CommandExecutor {
 
         Player player = (Player) this.sender;
 
+        player.sendMessage("Sending tracking history to client...");
+        player.sendMessage("CannonDebugExtra forge mod is required for this to work.");
+        player.sendMessage("https://github.com/alex-huff/CannonDebugExtra/releases");
+
         try {
             CDAdapter.payloadFromBlockSelections(this.user.getSelections()).forEach(packet -> CDManager.sendToPlayer(player, packet));
         } catch (IOException e) {
