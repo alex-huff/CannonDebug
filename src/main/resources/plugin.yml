@@ -3,7 +3,6 @@ main: ${project.groupId}.${project.artifactId}.${project.name}Plugin
 version: ${project.version}
 author: Sudzzy
 depend: [WorldEdit]
-softdepend: [PlotSquared]
 
 commands:
   cannondebug:
@@ -28,7 +27,6 @@ permissions:
   cannondebug.preview: {default: false}
   cannondebug.region: {default: false}
   cannondebug.select: {default: false}
-  cannondebug.tp: {default: false}
   cannondebug.tracking: {default: false}
 
   cannondebug.history.*:
@@ -53,7 +51,6 @@ permissions:
       cannondebug.preview: true
       cannondebug.region: true
       cannondebug.select: true
-      cannondebug.tp: true
 
   cannondebug.admin:
     default: op

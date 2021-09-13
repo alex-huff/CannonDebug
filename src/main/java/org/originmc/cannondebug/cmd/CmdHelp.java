@@ -40,6 +40,8 @@ public final class CmdHelp extends CommandExecutor {
             new FancyMessage("/c h,l,history,lookup ").color(AQUA).then("[?,params] ").color(DARK_AQUA).then("Lists latest profiling history.").color(YELLOW),
             new FancyMessage("/c p,page ").color(AQUA).then("[page] ").color(DARK_AQUA).then("Go to specific page for current pager.").color(YELLOW),
             new FancyMessage("/c v,pre,view,preview ").color(AQUA).then("Preview all selected blocks.").color(YELLOW),
+            new FancyMessage("/c e,excel ").color(AQUA).then("Open in Excel format. Requires CannonDebugExtra: ").color(YELLOW),
+            new FancyMessage("  Link: ").color(AQUA).then("github.com/alex-huff/CannonDebugExtra/releases").link("https://github.com/alex-huff/CannonDebugExtra/releases").color(YELLOW),
             new FancyMessage("/c r,region ").color(AQUA).then("Select all available blocks in WorldEdit region.").color(YELLOW),
             new FancyMessage("/c s,select ").color(AQUA).then("Bind block selector tool to hand.").color(YELLOW),
             new FancyMessage(""),

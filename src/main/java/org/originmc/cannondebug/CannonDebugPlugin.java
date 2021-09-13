@@ -30,16 +30,13 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.originmc.cannondebug.cmd.CommandType;
+import dev.phonis.networking.CDListener;
 import org.originmc.cannondebug.listener.PlayerListener;
 import org.originmc.cannondebug.listener.WorldListener;
 import org.originmc.cannondebug.utils.Configuration;
@@ -61,6 +58,9 @@ import static org.bukkit.ChatColor.RED;
 import static org.bukkit.ChatColor.WHITE;
 
 public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
+
+    public static CannonDebugPlugin instance;
+    public static final String cdChannel = "cannondebugextra:main";
 
     @Getter
     private final Map<UUID, User> users = new HashMap<>();
@@ -90,6 +90,11 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onEnable() {
+        CannonDebugPlugin.instance = this;
+
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, CannonDebugPlugin.cdChannel, CDListener.INSTANCE);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, CannonDebugPlugin.cdChannel);
+
         configuration = new Configuration(this);
         configuration.loadConfiguration();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -100,6 +105,12 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
         for (Player player : getServer().getOnlinePlayers()) {
             users.put(player.getUniqueId(), new User(player));
         }
+    }
+
+    @Override
+    public void onDisable() {
+        Bukkit.getMessenger().unregisterIncomingPluginChannel(this, CannonDebugPlugin.cdChannel, CDListener.INSTANCE);
+        Bukkit.getMessenger().unregisterOutgoingPluginChannel(this, CannonDebugPlugin.cdChannel);
     }
 
     @Override

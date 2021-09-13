@@ -31,8 +31,6 @@ import org.originmc.cannondebug.CannonDebugPlugin;
 import org.originmc.cannondebug.FancyPager;
 
 import static org.bukkit.ChatColor.*;
-import static org.bukkit.ChatColor.AQUA;
-import static org.bukkit.ChatColor.YELLOW;
 
 public final class CmdHistoryHelp extends CommandExecutor {
 

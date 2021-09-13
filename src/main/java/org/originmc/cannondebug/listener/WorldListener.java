@@ -14,12 +14,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.material.Dispenser;
-import org.bukkit.util.Vector;
 import org.originmc.cannondebug.BlockSelection;
 import org.originmc.cannondebug.CannonDebugPlugin;
 import org.originmc.cannondebug.EntityTracker;
 import org.originmc.cannondebug.User;
-import org.originmc.cannondebug.utils.Configuration;
 
 import java.util.List;
 
