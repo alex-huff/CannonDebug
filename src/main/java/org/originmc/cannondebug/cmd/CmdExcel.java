@@ -16,16 +16,18 @@ public class CmdExcel extends CommandExecutor {
 
     @Override
     public boolean perform() {
-        if (this.sender instanceof Player) {
-            Player player = (Player) this.sender;
-
-            try {
-                CDAdapter.payloadFromBlockSelections(this.user.getSelections()).forEach(packet -> CDManager.sendToPlayer(player, packet));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        if (!(this.sender instanceof Player)) {
+            return true;
         }
+
+        Player player = (Player) this.sender;
+
+        try {
+            CDAdapter.payloadFromBlockSelections(this.user.getSelections()).forEach(packet -> CDManager.sendToPlayer(player, packet));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 
