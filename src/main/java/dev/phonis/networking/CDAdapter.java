@@ -50,7 +50,7 @@ public class CDAdapter {
     }
 
     public static CDHistory fromBlockSelections(List<BlockSelection> selections, boolean byOrder) {
-        return new CDHistory(selections.stream().map(CDAdapter::fromBlockSelection).collect(Collectors.toList()), byOrder);
+        return new CDHistory(selections.stream().filter(blockSelection -> blockSelection.getTracker() != null).map(CDAdapter::fromBlockSelection).collect(Collectors.toList()), byOrder);
     }
 
     public static CDBlockSelection fromBlockSelection(BlockSelection selection) {
