@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.originmc.cannondebug.CannonDebugPlugin;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class CmdExcel extends CommandExecutor {
 
@@ -21,7 +20,6 @@ public class CmdExcel extends CommandExecutor {
             return true;
         }
 
-        System.out.println(Arrays.toString(this.args));
         boolean byOrder = this.args.length > 1 && this.args[1].equals("ooe");
         Player player = (Player) this.sender;
 
