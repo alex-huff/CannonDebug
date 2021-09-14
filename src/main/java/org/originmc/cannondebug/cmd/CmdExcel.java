@@ -20,6 +20,7 @@ public class CmdExcel extends CommandExecutor {
             return true;
         }
 
+        boolean byOrder = this.args.length > 0 && this.args[0].equals("ooe");
         Player player = (Player) this.sender;
 
         player.sendMessage("Sending tracking history to client...");
@@ -27,7 +28,7 @@ public class CmdExcel extends CommandExecutor {
         player.sendMessage("https://github.com/alex-huff/CannonDebugExtra/releases");
 
         try {
-            CDAdapter.payloadFromBlockSelections(this.user.getSelections()).forEach(packet -> CDManager.sendToPlayer(player, packet));
+            CDAdapter.payloadFromBlockSelections(this.user.getSelections(), byOrder).forEach(packet -> CDManager.sendToPlayer(player, packet));
         } catch (IOException e) {
             e.printStackTrace();
         }

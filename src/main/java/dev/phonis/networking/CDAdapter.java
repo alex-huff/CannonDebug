@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class CDAdapter {
 
-    public static List<CDPacket> payloadFromBlockSelections(List<BlockSelection> selections) throws IOException {
-        return CDAdapter.payloadFromCDHistory(CDAdapter.fromBlockSelections(selections));
+    public static List<CDPacket> payloadFromBlockSelections(List<BlockSelection> selections, boolean byOrder) throws IOException {
+        return CDAdapter.payloadFromCDHistory(CDAdapter.fromBlockSelections(selections, byOrder));
     }
 
     public static List<CDPacket> payloadFromCDHistory(CDHistory history) throws IOException {
@@ -49,8 +49,8 @@ public class CDAdapter {
         return packets;
     }
 
-    public static CDHistory fromBlockSelections(List<BlockSelection> selections) {
-        return new CDHistory(selections.stream().map(CDAdapter::fromBlockSelection).collect(Collectors.toList()));
+    public static CDHistory fromBlockSelections(List<BlockSelection> selections, boolean byOrder) {
+        return new CDHistory(selections.stream().map(CDAdapter::fromBlockSelection).collect(Collectors.toList()), byOrder);
     }
 
     public static CDBlockSelection fromBlockSelection(BlockSelection selection) {
