@@ -9,8 +9,10 @@ import org.originmc.cannondebug.EntityTracker;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.stream.Collectors;
 
 public class CDAdapter {
@@ -50,15 +52,34 @@ public class CDAdapter {
     }
 
     public static CDHistory fromBlockSelections(List<BlockSelection> selections, boolean byOrder) {
-        return new CDHistory(selections.stream().filter(blockSelection -> blockSelection.getTracker() != null).map(CDAdapter::fromBlockSelection).collect(Collectors.toList()), byOrder);
+        OptionalLong optionalMinTick = selections.parallelStream().filter(
+            blockSelection -> blockSelection.getTracker() != null
+        ).mapToLong(
+            blockSelection -> blockSelection.getTracker().getSpawnTick()
+        ).min();
+
+        if (optionalMinTick.isPresent()) {
+            long minTick = optionalMinTick.getAsLong();
+
+            return new CDHistory(
+                selections.parallelStream().filter(
+                    blockSelection -> blockSelection.getTracker() != null
+                ).map(
+                    blockSelection -> CDAdapter.fromBlockSelection(blockSelection, minTick)
+                ).collect(Collectors.toList()),
+                byOrder
+            );
+        }
+
+        return new CDHistory(Collections.emptyList(), byOrder);
     }
 
-    public static CDBlockSelection fromBlockSelection(BlockSelection selection) {
+    public static CDBlockSelection fromBlockSelection(BlockSelection selection, long minTick) {
         return new CDBlockSelection(
             selection.getId(),
             CDAdapter.fromLocation(selection.getLocation()),
             selection.getOrder(),
-            CDAdapter.fromEntityTracker(selection.getTracker())
+            CDAdapter.fromEntityTracker(selection.getTracker(), minTick)
         );
     }
 
@@ -70,13 +91,13 @@ public class CDAdapter {
         return new CDVec3D(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public static CDEntityTracker fromEntityTracker(EntityTracker tracker) {
+    public static CDEntityTracker fromEntityTracker(EntityTracker tracker, long minTick) {
         return new CDEntityTracker(
             CDAdapter.fromEntityType(tracker.getEntityType()),
-            tracker.getSpawnTick(),
-            tracker.getLocationHistory().stream().map(CDAdapter::fromLocation).collect(Collectors.toList()),
-            tracker.getVelocityHistory().stream().map(CDAdapter::fromVector).collect(Collectors.toList()),
-            tracker.getDeathTick()
+            tracker.getSpawnTick() - minTick,
+            tracker.getLocationHistory().parallelStream().map(CDAdapter::fromLocation).collect(Collectors.toList()),
+            tracker.getVelocityHistory().parallelStream().map(CDAdapter::fromVector).collect(Collectors.toList()),
+            tracker.getDeathTick() - minTick
         );
     }
 
