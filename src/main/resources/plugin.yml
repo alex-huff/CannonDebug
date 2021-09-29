@@ -28,6 +28,7 @@ permissions:
   cannondebug.region: {default: false}
   cannondebug.select: {default: false}
   cannondebug.tracking: {default: false}
+  cannondebug.excel: {default : false}
 
   cannondebug.history.*:
     default: false
@@ -51,6 +52,7 @@ permissions:
       cannondebug.preview: true
       cannondebug.region: true
       cannondebug.select: true
+      cannondebug.excel: true
 
   cannondebug.admin:
     default: op
