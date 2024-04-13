@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.material.Dispenser;
 import org.originmc.cannondebug.BlockSelection;
 import org.originmc.cannondebug.CannonDebugPlugin;
@@ -169,6 +171,15 @@ public class WorldListener implements Listener {
 
             // Add block tracker to user.
             selection.setTracker(tracker);
+        }
+    }
+
+    @EventHandler
+    public void onExplosionEvent(ExplosionPrimeEvent event) {
+        Entity entity = event.getEntity();
+
+        if (entity.getType().compareTo(EntityType.PRIMED_TNT) == 0) {
+            CannonDebugPlugin.instance.getLastTickLocations().put(entity.getEntityId(), entity.getLocation());
         }
     }
 

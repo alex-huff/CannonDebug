@@ -72,6 +72,9 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
     private final List<EntityTracker> activeTrackers = new ArrayList<>();
 
     @Getter
+    private final Map<Integer, Location> lastTickLocations = new HashMap<>();
+
+    @Getter
     @Setter
     private long currentTick = 0;
 
@@ -122,7 +125,8 @@ public final class CannonDebugPlugin extends JavaPlugin implements Runnable {
         while (iterator.hasNext()) {
             // Add new location and velocity to the tracker histories.
             EntityTracker tracker = iterator.next();
-            tracker.getLocationHistory().add(tracker.getEntity().getLocation());
+            Location entityLocation = (tracker.getLocationHistory().size() == 80) ? this.lastTickLocations.remove(tracker.getEntity().getEntityId()) : tracker.getEntity().getLocation();
+            tracker.getLocationHistory().add(entityLocation);
             tracker.getVelocityHistory().add(tracker.getEntity().getVelocity());
 
             // Remove dead entities from tracker.
